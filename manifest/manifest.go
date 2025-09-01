@@ -26,6 +26,7 @@ type (
 		GetKind() string
 		GetType() string
 		GetName() string
+		GetEnvironment() map[string]string
 	}
 
 	// ConcurrentResource is a resource with concurrency limits.

@@ -18,11 +18,12 @@ type (
 	// can be used to validate authenticity and prevent
 	// tampering.
 	Signature struct {
-		Version string `json:"version,omitempty"`
-		Kind    string `json:"kind"`
-		Type    string `json:"type"`
-		Name    string `json:"name"`
-		Hmac    string `json:"hmac"`
+		Version     string            `json:"version,omitempty"`
+		Kind        string            `json:"kind"`
+		Type        string            `json:"type"`
+		Name        string            `json:"name"`
+		Hmac        string            `json:"hmac"`
+		Environment map[string]string `json:"environment,omitempty"`
 	}
 )
 
@@ -50,6 +51,11 @@ func (s *Signature) GetType() string { return s.Type }
 
 // GetName returns the resource name.
 func (s *Signature) GetName() string { return s.Name }
+
+// GetEnvironment returns the resource name.
+func (s *Signature) GetEnvironment() map[string]string {
+	return s.Environment
+}
 
 // Validate returns an error if the signature is invalid.
 func (s Signature) Validate() error {

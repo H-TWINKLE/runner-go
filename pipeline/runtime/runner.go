@@ -163,8 +163,31 @@ func (s *Runner) run(ctx context.Context, stage *drone.Stage, data *client.Conte
 		}
 	}()
 
+	state := &pipeline.State{
+		Build:  data.Build,
+		Stage:  stage,
+		Repo:   data.Repo,
+		System: data.System,
+	}
+
+	yamlManifest, err := manifest.ParseString(string(data.Config.Data))
+	if err != nil {
+		log.WithError(err).Error("cannot parse configuration file")
+		state.FailAll(err)
+		return s.Reporter.ReportStage(noContext, state)
+	}
+
+	yamlResource, err := s.Lookup(stage.Name, yamlManifest)
+	if err != nil {
+		log.WithError(err).Error("cannot find pipeline resource")
+		state.FailAll(err)
+		return s.Reporter.ReportStage(noContext, state)
+	}
+	yamlEnvironment := yamlResource.GetEnvironment()
+
 	envs := environ.Combine(
 		s.Environ,
+		yamlEnvironment,
 		environ.System(data.System),
 		environ.Repo(data.Repo),
 		environ.Build(data.Build),
@@ -182,13 +205,6 @@ func (s *Runner) run(ctx context.Context, stage *drone.Stage, data *client.Conte
 			v = fmt.Sprintf("%q", v)
 		}
 		return v
-	}
-
-	state := &pipeline.State{
-		Build:  data.Build,
-		Stage:  stage,
-		Repo:   data.Repo,
-		System: data.System,
 	}
 
 	// evaluates whether or not the agent can process the

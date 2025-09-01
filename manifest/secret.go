@@ -16,12 +16,13 @@ type (
 	// Secret is a resource that provides encrypted data
 	// and pointers to external data (i.e. from vault).
 	Secret struct {
-		Version string    `json:"version,omitempty"`
-		Kind    string    `json:"kind,omitempty"`
-		Type    string    `json:"type,omitempty"`
-		Name    string    `json:"name,omitempty"`
-		Data    string    `json:"data,omitempty"`
-		Get     SecretGet `json:"get,omitempty"`
+		Version     string            `json:"version,omitempty"`
+		Kind        string            `json:"kind,omitempty"`
+		Type        string            `json:"type,omitempty"`
+		Name        string            `json:"name,omitempty"`
+		Data        string            `json:"data,omitempty"`
+		Get         SecretGet         `json:"get,omitempty"`
+		Environment map[string]string `json:"environment,omitempty"`
 	}
 
 	// SecretGet defines a request to get a secret from
@@ -58,6 +59,11 @@ func (s *Secret) GetType() string { return s.Type }
 
 // GetName returns the resource name.
 func (s *Secret) GetName() string { return s.Name }
+
+// GetEnvironment returns the resource name.
+func (s *Secret) GetEnvironment() map[string]string {
+	return s.Environment
+}
 
 // Validate returns an error if the secret is invalid.
 func (s *Secret) Validate() error {
